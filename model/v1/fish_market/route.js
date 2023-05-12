@@ -24,7 +24,6 @@ router.post('/market_listing', function (req, res) {
     })
 })
 
-
 var contactstorage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'public/contact');

@@ -7,6 +7,8 @@ const e = require('express');
 
 var product = {
 
+    // add product to cart
+
     addToCart: function (request, id, callback) {
         product.checkProduct(request, function (isExist) {
             if (isExist != null) {
@@ -121,127 +123,7 @@ var product = {
         })
     },
 
-    // placeOrder: function (request, id, callback) {
-    //     con.query(`select * from tbl_cart where user_id=?`, [id], function (err, result) {
-    //         if (!err && result.length > 0) {
-    //             asyncLoop(result, function (item, next) {
-    //                 var sql = `SELECT c.user_id,c.product_id,c.cutting_id,c.sub_total,c.qty,pd.service_category_id,pd.market_id,pd.name as product_name,pd.price as product_price,pd.unit,u.first_name,m.market_name FROM tbl_cart c JOIN tbl_product_details pd ON c.product_id = pd.id JOIN tbl_market m ON pd.market_id = m.id JOIN tbl_user u ON c.user_id = u.id`
-    //                 con.query(sql, [item.id], function (error, product) {
-    //                     if (!error) {
-    //                         con.query(`select * from tbl_cutting_cleaning where id = ?`, [product[0].cutting_id], function (error, cutting) {
-    //                             if (!error) {
-    //                                 product[0].cuttind_cleaning = cutting[0];
-    //                                 var insertObj = {
-    //                                     user_id: id,
-    //                                     tax_id: request.tax_id,
-    //                                     order_no: "abc",
-    //                                     order_status: "pending",
-    //                                     prefered_way_to_reach_receiver: request.prefered_way_to_reach_receiver
-    //                                 };
-    //                                 con.query("INSERT INTO tbl_order SET ?", [insertObj], function (err, result) {
-    //                                     if (!err) {
-    //                                         asyncLoop(product, function (item, next) {
-
-    //                                             console.log("item...........", item);
-    //                                             var orderDetail = {
-    //                                                 order_id: result.insertId,
-    //                                                 product_id: item.product_id,
-    //                                                 quantity: item.qty,
-    //                                                 price: item.product_price,
-    //                                             }
-    //                                             con.query("INSERT INTO tbl_order_details SET ?", [orderDetail], function (err, result) {
-    //                                                 if (!err) {
-    //                                                     next()
-    //                                                 } else {
-    //                                                     console.log(err);
-    //                                                     next()
-    //                                                 }
-    //                                             })
-    //                                         }, function () {
-    //                                             callback("1", "reset_keyword_success_message",result);
-    //                                         })
-
-    //                                     } else {
-    //                                         console.log(err);
-    //                                         callback("0", "reset_keyword_something_wrong_message", null)
-    //                                     }
-    //                                 })
-    //                             } else {
-    //                                 console.log(error);
-    //                                 callback("0", "reset_keyword_something_wrong_message", null)
-    //                             }
-    //                         })
-    //                     } else {
-    //                         console.log(error);
-    //                         callback("0", "reset_keyword_something_wrong_message", null)
-    //                     }
-    //                 })
-    //             }, () => {
-    //                 callback("1", "reset_keyword_success_message", result)
-    //             })
-    //         } else {
-    //             callback('0', 'reset_keyword_something_wrong_message', null)
-    //         }
-    //     })
-    // },
-
-    // placeOrder: function(request,id,callback){
-    //     product.confirmOrder(request,id,function(code,message,data){
-    //         if(data){
-    //             product.getPaymentDetail(request.payment_id,function(paymentDetail){ 
-    //                 if(paymentDetail){
-    //                     callback("1","reset_keyword_success_message",{data,paymentDetail})
-    //                 }else{
-    //                     callback("0", "reset_keyword_data_not_found", null);
-    //                 }
-    //             })
-    //         }else{
-    //             // console.log(error);
-    //             callback("0", "reset_keyword_data_not_found", null);
-    //         }
-    //     })
-    // },
-
-    // confirmOrder: function (request, id, callback) {
-    //     var genericResponse = {
-    //         code: 1,
-    //         message: 'success',
-    //         data: {}
-    //     }
-    //     product.orderSender(id, function (sender) {
-    //         if (!sender) {
-    //             callback("0", "reset_keyword_data_not_found", null);
-    //         } else {
-    //             product.getOrderTotal(id, function (result) {
-    //                 // console.log("order total",JSON.stringify(Object.values(JSON.parse(JSON.stringify(result)))));
-    //                 console.log("order total", JSON.stringify(Object.values(JSON.parse(JSON.stringify(result)))).toString());
-    //                 if (result) {
-    //                     product.getTaxDetails(request, function (tax) {
-    //                         // result.senderInfo = sender;
-    //                         // genericResponse.data.result = Object.values(JSON.parse(JSON.stringify(result)));
-
-    //                         genericResponse.data.result = JSON.stringify(Object.values(JSON.parse(JSON.stringify(result))));
-    //                         genericResponse.data.senderInfo = JSON.parse(sender);
-
-    //                         console.log(genericResponse);
-    //                         if (tax) {
-    //                             // console.log(result);
-    //                             // result.push({taxes:tax})
-    //                             var grand_total = result.subTotal.subTotal + result[0].taxes;
-    //                             // result.push({grand_total:grand_total}) ;
-    //                             // console.log(Object.values(JSON.parse(JSON.stringify(result))));
-    //                             callback("1", "reset_keyword_success_message", genericResponse);
-    //                         } else {
-    //                             callback("0", "reset_keyword_data_not_found", null);
-    //                         }
-    //                     });
-    //                 } else {
-    //                     callback('0', "reset_keyword_data_not_found", null)
-    //                 }
-    //             })
-    //         }
-    //     });
-    // },
+    // confirm order
 
     confirmOrder: function (request, id, callback) {
         product.orderSender(id, function (sender) {
@@ -256,9 +138,7 @@ var product = {
                         product.getOrderTotal(id, function (result, subTotal) {
                             if (result) {
                                 product.getTaxDetails(request, function (tax, total_tax) {
-                                    // result.senderInfo = sender;
                                     if (tax) {
-                                        // result.taxes = tax;
                                         if (request.promocode_id != "" && request.promocode_id != undefined) {
                                             product.applyPromoCode(request, subTotal, function (finalPrice, promocode_id, qty) {
                                                 if (finalPrice) {
@@ -274,15 +154,21 @@ var product = {
                                                                         grand_total: grand_total,
                                                                         finalPrice: finalPrice,
                                                                         reciever: reciever,
-                                                                        paymentDetail:paymentDetail,
-                                                                        promocode_id:promocode_id,
-                                                                        user_id:id
+                                                                        paymentDetail: paymentDetail,
+                                                                        promocode_id: promocode_id,
+                                                                        user_id: id
                                                                     }
-                                                                    product.insertOrderData(data,request,function(isInserted){
-                                                                        if(isInserted){
-                                                                            callback("1", "reset_keyword_success_message", data);
-                                                                        }else{
-                                                                            callback('0','reset_keyword_data_not_found',null);
+                                                                    product.insertOrderData(data, request, function (isInserted) {
+                                                                        if (isInserted) {
+                                                                            con.query(`update tbl_cart set is_active = '0' where user_id = ${id}`, function (error, result) {
+                                                                                if (!error) {
+                                                                                    callback("1", "reset_keyword_success_message", data);
+                                                                                } else {
+                                                                                    callback('0', 'reset_keyword_data_not_found', null);
+                                                                                }
+                                                                            })
+                                                                        } else {
+                                                                            callback('0', 'reset_keyword_data_not_found', null);
                                                                         }
                                                                     });
                                                                 } else {
@@ -444,20 +330,20 @@ var product = {
         })
     },
 
-    insertOrderData: function (data,request, callback) {
-        product.insertOrder(data,request, function (productInsertId) {
-            if (productInsertId){
-                product.insertOrderDetail(data,productInsertId,function(orderDetail){
-                    if(orderDetail){
-                        product.insertReciever(data,productInsertId,function(orderReciever){
-                            if(orderReciever){
+    insertOrderData: function (data, request, callback) {
+        product.insertOrder(data, request, function (productInsertId) {
+            if (productInsertId) {
+                product.insertOrderDetail(data, productInsertId, function (orderDetail) {
+                    if (orderDetail) {
+                        product.insertReciever(data, productInsertId, function (orderReciever) {
+                            if (orderReciever) {
                                 // console.log('order reciever insert');
                                 callback(true);
-                            }else{
+                            } else {
                                 callback(null);
                             }
                         })
-                    }else{
+                    } else {
                         callback(null);
                     }
                 })
@@ -467,20 +353,20 @@ var product = {
         })
     },
 
-    insertOrderDetail: function (data,id, callback) {
+    insertOrderDetail: function (data, id, callback) {
         asyncLoop(data.product, function (item, next) {
             var insertObj = {
-                order_id:id,
-                product_id:item.product_id,
-                sub_total:item.sub_total,
-                quantity:item.qty,
-                price:item.price,
-                status:"placed"
+                order_id: id,
+                product_id: item.product_id,
+                sub_total: item.sub_total,
+                quantity: item.qty,
+                price: item.price,
+                status: "placed"
             }
-            con.query(`insert into tbl_order_details set ?`,[insertObj],function(error,result){
-                if(!error){
+            con.query(`insert into tbl_order_details set ?`, [insertObj], function (error, result) {
+                if (!error) {
                     next();
-                }else{
+                } else {
                     next();
                 }
             })
@@ -489,43 +375,102 @@ var product = {
         })
     },
 
-    insertOrder: function(data,request,callback){
+    insertOrder: function (data, request, callback) {
         var insertObj = {
-            user_id:data.user_id,
-            payment_id:data.paymentDetail[0].id,
-            tax_id:data.tax[0].id,
-            promocode_id:data.promocode_id,
-            order_no:"1234",
-            order_status:"pending",
-            delivery_time:"10:00:00",
-            delivery_date:"2023-05-10",
-            prefered_way_to_reach_receiver:request.prefered_way_to_reach_receiver
+            user_id: data.user_id,
+            payment_id: data.paymentDetail[0].id,
+            tax_id: data.tax[0].id,
+            promocode_id: data.promocode_id,
+            order_no: "1234",
+            order_status: "pending",
+            delivery_time: "10:00:00",
+            delivery_date: "2023-05-10",
+            prefered_way_to_reach_receiver: request.prefered_way_to_reach_receiver
         }
-        con.query(`insert into tbl_order set ? `,[insertObj],function(error,result){
-            if(!error){
+        con.query(`insert into tbl_order set ? `, [insertObj], function (error, result) {
+            if (!error) {
                 var id = result.insertId
                 callback(id);
-            }else{
+            } else {
                 callback(false);
             }
         })
     },
 
-    insertReciever: function(data,order_id,callback){
+    insertReciever: function (data, order_id, callback) {
         asyncLoop(data.reciever, function (item, next) {
             var insertObj = {
-                order_id:order_id,
-                reciever_id:item.id
+                order_id: order_id,
+                reciever_id: item.id
             }
-            con.query(`insert into tbl_order_reciever set ?`,[insertObj],function(error,result){
-                if(!error){
+            con.query(`insert into tbl_order_reciever set ?`, [insertObj], function (error, result) {
+                if (!error) {
                     next();
-                }else{
+                } else {
                     next();
                 }
             })
         }, () => {
             callback(true);
+        })
+    },
+
+    // show cart item
+
+    cartDetails: function (request, id, callback) {
+        con.query("select * from tbl_cart where user_id = ? AND is_active = '1' AND is_delete = '0'", [id], function (err, result) {
+            if (!err && result.length > 0) {
+                callback("1", "data found successfully", result);
+            } else {
+                callback("0", "Something went wrong", null);
+            }
+        })
+    },
+
+    // product listing
+
+    product_listing: function (request, id, callback) {
+        product.product(request, function (products) {
+            if (products) {
+                product.getOrderTotal(id, function (result, subTotal) {
+                    if (result) {
+                        for (let i = 0; i <= products[0].product.length - 1; i++) {
+                            if(result[i]){
+                                if (products[0].product[i].id == result[i].product_id) {          
+                                    products[0].product[i].cartQty = (result[i].qty);
+                                }
+                            } else {
+                                callback('1','bhai nthi thatu',products);
+                            }
+                        }
+                    }
+                })
+            }
+        });
+    },
+
+    product: function (request, callback) {
+        con.query("SELECT i.product_image, CONCAT('" + global.BASE_URL + global.PRODUCT_URL + "', '',product_image)as image_name FROM tbl_product_image i join tbl_product_details p on p.id = i.product_id", [request.market_id], function (err, result) {
+            if (!err && result.length > 0) {
+                con.query("select * from tbl_product_details where market_id= ?  ", [request.market_id], function (err, product) {
+                    if (!err && product.length > 0) {
+                        result[0].product = product;
+                        asyncLoop(result, function (item, next) {
+                            if (item) {
+                                next();
+                            } else {
+                                next();
+                            }
+                        }, () => {
+                            callback(result);
+                        })
+                    } else {
+                        callback("1", "reset_keyword_success_message", result);
+                    }
+                })
+            } else {
+                callback('0', "reset_keyword_data_not_found", null)
+            }
         })
     }
 }

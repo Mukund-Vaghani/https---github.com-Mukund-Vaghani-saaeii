@@ -7,13 +7,20 @@ const e = require('express');
 
 var fish_market = {
 
-
     market_listing: function (request, callback) {
-        con.query(`select * from tbl_market where service_category_id = ? AND is_active = '1' AND is_delete = '0'`, [request.service_category_id], function (err, result) {
+        var day = new Date()
+        con.query(`select m.service_category_id,m.market_name,m.market_image,dw.days,dw.open_time,dw.close_time,
+        CASE
+                WHEN dw.is_open = '0' THEN 'open on monday'
+                WHEN CURRENT_TIME() > dw.close_time THEN 'close'
+                WHEN dw.is_open = '1' THEN concat( 'open untill'," ",dw.close_time) 
+            END AS status 
+        from tbl_market m join tbl_days_week dw on m.id = dw.market_id where m.service_category_id = ? AND dw.day_id = ${day.getDay()} AND m.is_active = '1' AND m.is_delete = '0';`, [request.service_category_id], function (err, result) {
             if (!err && result.length > 0) {
-                callback("1",'reset_keyword_success_message', result);
+                callback("1", 'reset_keyword_success_message', result);
             } else {
-                callback("0",'reset_keyword_success_message', null);
+                console.log(err)
+                callback("0", 'reset_keyword_success_message', null);
             }
         })
     },

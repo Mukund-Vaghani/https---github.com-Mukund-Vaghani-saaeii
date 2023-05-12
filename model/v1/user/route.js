@@ -82,26 +82,6 @@ router.post('/cardtype', function (req, res) {
     })
 });
 
-// router.post('/addtocart', function (req, res) {
-//     middleware.decryption(req.body, function (request) {
-//         request.user_id = req.user_id;
-//         var rules = {
-//             product_id: "required",
-//             sub_total: "required",
-//             unit: "required",
-//             price: "required"
-//         };
-//         var messages = {
-//             required: req.language.required
-//         }
-//         if (middleware.checkValidationRules(res, request, rules, messages)) {
-//             auth.addToCart(request, function (code, message, data) {
-//                 middleware.send_response(res, req, code, message, data);
-//             });
-//         };
-//     });
-// });
-
 router.post('/shop_distance', function (req, res) {
     var id = req.user_id;
     middleware.decryption(req.body, function (request) {
@@ -122,8 +102,7 @@ router.post('/saveaddress', function (req, res) {
 
 router.post('/addnewaddress', function (req, res) {
     middleware.decryption(req.body, function (request) {
-        request.user_id = req.user_id;
-        console.log(request);
+        id = req.user_id;
         var rules = {
             property: "required|in:apartment,hotel,hospital,villa,other",
             street_name: "required",
@@ -146,14 +125,15 @@ router.post('/addnewaddress', function (req, res) {
             required: req.language.required
         }
         if (middleware.checkValidationRules(res, request, rules, messages)) {
-            auth.addNewAddress(request, function (code, message, data) {
+            auth.addNewAddress(request,id, function (code, message, data) {
                 middleware.send_response(res, req, code, message, data);
             });
         };
     });
 });
 
-router.post('/favorite', function (req, res) {
+router.post('/add_favorite', function (req, res) {
+    var id = req.user_id;
     middleware.decryption(req.body, function (request) {
         var rules = {
             product_id: 'required',
@@ -162,39 +142,45 @@ router.post('/favorite', function (req, res) {
             required: req.language.required,
         }
         if (middleware.checkValidationRules(res, request, rules, messages)) {
-            auth.favorite(request, function (code, message, data) {
+            auth.favorite(request,id, function (code, message, data) {
                 middleware.send_response(res, req, code, message, data);
             });
         }
     })
 });
 
-
-var storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, '../exam/public/event')
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname))
-    }
+router.post('/favourites',function(req,res){
+    auth.favouriteProduct(req,function(code,message,data){
+        middleware.send_response(res, req,code,message,data);
+    });
 });
 
-var event = multer({
-    storage: storage,
-    limits: {
-        fileSize: (12 * 1024 * 1024)
-    }
-}).single('event');
 
-router.post('/uploadeventpicture', function (req, res) {
-    event(req, res, function (error) {
-        if (error) {
-            console.log(error);
-            middleware.send_response(req, res, "0", "fail to upload event image", null);
-        } else {
-            middleware.send_response(req, res, "1", "upload success", { image: req.file.filename });
-        }
-    })
-})
+// var storage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//         cb(null, '../exam/public/event')
+//     },
+//     filename: function (req, file, cb) {
+//         cb(null, Date.now() + path.extname(file.originalname))
+//     }
+// });
+
+// var event = multer({
+//     storage: storage,
+//     limits: {
+//         fileSize: (12 * 1024 * 1024)
+//     }
+// }).single('event');
+
+// router.post('/uploadeventpicture', function (req, res) {
+//     event(req, res, function (error) {
+//         if (error) {
+//             console.log(error);
+//             middleware.send_response(req, res, "0", "fail to upload event image", null);
+//         } else {
+//             middleware.send_response(req, res, "1", "upload success", { image: req.file.filename });
+//         }
+//     })
+// })
 
 module.exports = router;

@@ -139,8 +139,8 @@ var user = {
 
 
     FindDistance: function (id, request, callback) {
-        product.getUserDetails(id, function (userdata) {
-            var lattitude = userdata[0].latitude;
+        user.getUserDetails(id, function (userdata) {
+            var lattitude = userdata[0].latitude;   
             var longitude = userdata[0].longitude;
             con.query(`SELECT m.*,(6371 * acos ( cos (radians(${lattitude}) ) * cos( radians(m.latitude) ) * cos( radians(m.longitude ) - radians(${longitude}
                 ) ) + sin (radians(${lattitude}) ) * sin( radians(m.latitude ) ) ) ) AS distance FROM tbl_market m where is_active = 1 And is_delete = 0 HAVING distance < 10`, function (err, result) {
@@ -159,8 +159,7 @@ var user = {
         con.query("select * from tbl_saved_address where user_id = ?", [id], function (err, result) {
             if (!err && result.length > 0) {
                 var address_id = result[0].address_id;
-                product.getAddressDetails(address_id, function (Addressdata) {
-                    // console.log("address", Addressdata)
+                user.getAddressDetails(address_id, function (Addressdata) {
                     if (Addressdata != null) {
                         callback("1",'reset_keyword_success_message', Addressdata);
                     } else {
@@ -176,7 +175,7 @@ var user = {
     },
 
     getAddressDetails: function (id, callback) {
-        con.query("select * from tbl_Address where user_id = ?", [id], function (err, result) {
+        con.query("select * from tbl_address where user_id = ?", [id], function (err, result) {
             if (!err && result.length > 0) {
                 callback(result);
             } else {
@@ -187,29 +186,30 @@ var user = {
 
     },
 
-    addNewAddress: function (req, callback) {
+    addNewAddress: function (req,id, callback) {
         var sql = `INSERT INTO tbl_address SET ?`;
         var insertObj = {
-            user_id: req.user_id,
+            user_id: id,
+            city_id: req.city_id,
             property: req.property,
             street_name: req.street_name,
             nearby_landmark: req.nearby_landmark,
-            city_id: req.city_id,
             area_name: req.area_name,
-            villa_number: (req.property == 'villa') ? villa_number : "",
-            building_number: (req.property == 'apartment') ? building_number : "",
-            apartment_number: (req.property == 'apartment') ? apartment_number : "",
-            hotel_name: (req.property == 'hotel') ? hotel_name : "",
-            room_number: (req.property == 'hotel') ? room_number : "",
-            hospital_name: (req.property == 'hospital') ? hospital_name : "",
-            section: (req.property == 'hospital') ? section : "",
-            floor: (req.property == 'hospital') ? floor : "",
-            location_name: (req.property == 'other') ? location_name : "",
-            location_number: (req.property == 'other') ? location_number : "",
+            villa_number: (req.property == "villa") ? req.villa_number : "",
+            building_number: (req.property == 'apartment') ? req.building_number : "",
+            apartment_number: (req.property == 'apartment') ? req.apartment_number : "",
+            hotel_name: (req.property == 'hotel') ? req.hotel_name : "",
+            room_number: (req.property == 'hotel') ? req.room_number : "0",
+            hospital_name: (req.property == 'hospital') ? req.hospital_name : "",
+            section: (req.property == 'hospital') ? req.section : "",
+            floor: (req.property == 'hospital') ? req.floor : "",
+            location_name: (req.property == 'other') ? req.location_name : "",
+            location_number: (req.property == 'other') ? req.location_number : "",
         };
         con.query(sql, [insertObj], function (err, result) {
+            console.log(err);
             if (!err) {
-                callback("1",'reset_keyword_success_message', null);
+                callback("1",'reset_keyword_success_message', result);
             } else {
                 callback("0",'reset_keyword_something_wrong_message', null)
             };
@@ -217,15 +217,15 @@ var user = {
     },
 
 
-    favorite: function (req, request, callback) {
+    favorite: function (req,id, callback) {
         var insertObj = {
-            user_id: req.user_id,
-            product_id: request.product_id
+            user_id: id,
+            product_id: req.product_id
         }
         con.query("INSERT INTO tbl_favourites SET ?", [insertObj], function (err, result) {
             console.log(result);
             if (!err) {
-                product.getfavorite(result.insertId, function (data) {
+                user.getfavorite(result.insertId, function (data) {
                     if (data == null) {
                         callback("0",'reset_keyword_something_wrong_message', null)
                     } else {
@@ -267,6 +267,16 @@ var user = {
                 callback("1",'reset_keyword_success_message', result);
             } else {
                 callback("0",'reset_keyword_something_wrong_message', null);
+            };
+        });
+    },
+
+    favouriteProduct:function(req,callback){
+        con.query(`SELECT f.id,f.product_id,pd.name,CONCAT(u.first_name,' ',u.last_name) as user_name FROM tbl_favourites f JOIN tbl_product_details pd ON pd.id = f.id JOIN tbl_user u ON u.id = f.user_id WHERE user_id = ?`,[req.user_id],function(error,result){
+            if (!error && result.length > 0) {
+                callback('1','Data Found!!',result);
+            } else {
+                callback('0','rest_keywords_something_wrong',error);
             };
         });
     },
