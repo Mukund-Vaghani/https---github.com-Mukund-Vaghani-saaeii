@@ -24,45 +24,45 @@ router.post('/market_listing', function (req, res) {
     })
 })
 
-var contactstorage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'public/contact');
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname));
-    }
-})
+// var contactstorage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//         cb(null, 'public/contact');
+//     },
+//     filename: function (req, file, cb) {
+//         cb(null, Date.now() + path.extname(file.originalname));
+//     }
+// })
 
-var uploadcontact = multer({
-    storage: contactstorage,
-    limits: {
-        fileSize: (12 * 1024 * 1024)
-    }
-})
+// var uploadcontact = multer({
+//     storage: contactstorage,
+//     limits: {
+//         fileSize: (12 * 1024 * 1024)
+//     }
+// })
 
-var uploadmultiimage = uploadcontact.fields([
-    {
-        name: 'contact_image',
-        maxCount: 3
-    }
-]);
+// var uploadmultiimage = uploadcontact.fields([
+//     {
+//         name: 'contact_image',
+//         maxCount: 3
+//     }
+// ]);
 
-router.post('/uploadcontactimage', function (req, res) {
-    uploadmultiimage(req, res, function (error) {
-        if (error) {
-            console.log(error)
-            middleware.send_response(req, res, "0", "fail to upload image", null);
-        } else {
-            var image = [];
-        req.files.contact_image.forEach(element => {
-            image.push(element);
-        });
+// router.post('/uploadcontactimage', function (req, res) {
+//     uploadmultiimage(req, res, function (error) {
+//         if (error) {
+//             console.log(error)
+//             middleware.send_response(req, res, "0", "fail to upload image", null);
+//         } else {
+//             var image = [];
+//         req.files.contact_image.forEach(element => {
+//             image.push(element);
+//         });
         
-        middleware.send_response(req, res, "1", "upload success", { image: image });
-            // middleware.send_response(req, res, "1", "upload success", { image: req.files.contact_image[0].filename });
-        }
-    })
-})
+//         middleware.send_response(req, res, "1", "upload success", { image: image });
+//             // middleware.send_response(req, res, "1", "upload success", { image: req.files.contact_image[0].filename });
+//         }
+//     })
+// })
 
 
 module.exports = router;

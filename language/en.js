@@ -5,8 +5,8 @@ var message = {
     "rest_keywords_in":"select shown value",
     "reset_keyword_required_message":"Please enter :attr",
     "reset_keyword_unique_email_message":"Email is allready exist",
-    "reset_keyword_something_wrong_message":"something went wrong",
-    "reset_keyword_add_message":"add successfully",
+    "something_wrong_message":"We apologize, but it seems that something went wrong with your request.",
+    "reset_keyword_add_message":"data add successfully",
     "reset_keyword_invalid_email_message":"email is not valide",
     "reset_keyword_success_message":"Successfull",
     "reset_keyword_edit_message":"user edit successfully",
@@ -23,6 +23,12 @@ var message = {
     "reset_keyword_otp_send":"OTP send successfully",
     "reset_keyword_sigup_first":"You have to signup first",
     "reset_keyword_data_not_found":"data not found",
-    "reser_keyword_card_add":"card details Added successfully!"
+    "reser_keyword_card_add": "card details Added successfully!",
+    "listing_success_message": "Congratulations! Your request to retrieve data has been successful.",
+    "listing_error_message": "We apologize, but there seems to be an issue while listing the requested data.",
+    "data_add_error_message": "We are sorry, but we encountered an error while attempting to add the requested data.",
+    "data_found_success_message": "We have successfully located the data you requested",
+    "order_placed_succefully_message": "Congratulations! Your order has been placed successfully.",
+    "order_placed_error_message":"We're sorry, but we encountered an error while processing your order."
 };
 module.exports = message;

@@ -2,7 +2,7 @@ var message = {
     "reset_keyword_required_message":"કૃપા કરીને દાખલ કરો :attr",
     "reset_keyword_unique_email_message":"ઈમેલ પહેલાથી જ અસ્તિત્વમાં છે",
     "reset_keyword_something_wrong_message":"કૈક તો લોચા છે",
-    "reset_keyword_add_message":"સફળતાપૂર્વક ઉમેરો",
+    "reset_keyword_add_message":"ડેટા સફળતાપૂર્વક ઉમેરો",
     "reset_keyword_invalid_email_message":"ઈમેલ માન્ય નથી કેમ આમ કરસ ભાઈ!!",
     "reset_keyword_success_message":"ભાઈ મલી ગયો",
     "reset_keyword_edit_message":"ભાઈ તો બાદલી ગ્યો",
@@ -18,7 +18,13 @@ var message = {
     "reset_keyword_link_expired":"તમારી લિંક સમાપ્ત થઈ ગઈ છે",
     "reset_keyword_otp_send":"OTP સફળતાપૂર્વક મોકલ્યો",
     "reset_keyword_sigup_first":"તમારે પહેલા સાઇન અપ કરવું પડશે",
-    "reset_keyword_data_not_found":"ડેટા મળ્યો નથી"
+    "reset_keyword_data_not_found": "ડેટા મળ્યો નથી",
+    "listing_success_message": "અભિનંદન! ડેટા પુનઃપ્રાપ્ત કરવાની તમારી વિનંતી સફળ રહી છે.",
+    "listing_error_message": "અમે ક્ષમાપ્રાર્થી છીએ, પરંતુ વિનંતી કરેલ ડેટાને સૂચિબદ્ધ કરતી વખતે કોઈ સમસ્યા હોવાનું જણાય છે.",
+    "data_add_error_message": "અમે દિલગીર છીએ, પરંતુ વિનંતી કરેલ ડેટા ઉમેરવાનો પ્રયાસ કરતી વખતે અમને એક ભૂલ આવી.",
+    "data_found_success_message": "તમે વિનંતી કરેલ ડેટા અમે સફળતાપૂર્વક શોધી લીધો છે",
+    "order_placed_succefully_message": "અભિનંદન! તમારો ઓર્ડર સફળતાપૂર્વક મૂકવામાં આવ્યો છે.",
+    "order_placed_error_message":"અમે દિલગીર છીએ, પરંતુ તમારા ઓર્ડર પર પ્રક્રિયા કરતી વખતે અમને એક ભૂલ આવી."
 
 };
 module.exports = message;

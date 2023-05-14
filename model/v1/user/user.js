@@ -19,13 +19,13 @@ var user = {
                 var receiver_id = result.insertId;
                 con.query(`SELECT * FROM tbl_receiver WHERE id = ?`, [receiver_id], function (error, result) {
                     if (!error) {
-                        callback("1", "reset_keyword_add_receiver", result)
+                        callback("1", "reset_keyword_add_message", result)
                     } else {
-                        callback("0", "reset_keyword_error_add_receiver", null);
+                        callback("0", "data_add_error_message", null);
                     }
                 })
             } else {
-                callback("0", "reset_keyword_error_add_receiver", null);
+                callback("0", "something_wrong_message", null);
             }
         })
     },
@@ -38,12 +38,12 @@ var user = {
                     if (SavedReceiver != null) {
                         callback("1",'reset_keyword_add_message', SavedReceiver);
                     } else {
-                        callback("0",'reset_keyword_something_wrong_message', null)
+                        callback("0",'data_add_error_message', null)
                     }
                 })
 
             } else {
-                callback("0",'reset_keyword_something_wrong_message', null)
+                callback("0",'something_wrong_message', null)
             }
 
         })
@@ -73,10 +73,10 @@ var user = {
         };
         con.query(sql, [insertObject], function (error, result) {
             if (!error) {
-                callback("1", 'reser_keyword_card_add', result);
+                callback("1", 'reset_keyword_add_message', result);
             } else {
                 console.log(error);
-                callback("0",'reset_keyword_something_wrong_message', null)
+                callback("0",'data_add_error_message', null)
             };
         });
     },
@@ -85,10 +85,10 @@ var user = {
         var sql = `SELECT c.id,tc.card_name,c.card_holder_name,c.card_number,c.expiry_date FROM tbl_card c JOIN tbl_card_type tc ON tc.id=c.card_type_id WHERE c.user_id = ? AND c.is_active = '1' AND c.is_delete = '0' AND is_saved ='1'`
         con.query(sql, [id], function (error, result) {
             if (!error && result.length > 0) {
-                callback("1",'reset_keyword_success_message', result)
+                callback("1",'listing_success_message', result)
             }else{
                 console.log(error);
-                callback("0",'reset_keyword_something_wrong_message', null)
+                callback("0",'listing_error_message', null)
             };
         });
     },
@@ -97,10 +97,10 @@ var user = {
         var sql = `SELECT id,card_name FROM tbl_card_type`;
         con.query(sql, function (error, result) {
             if (!error && result.length > 0) {
-                callback("1",'reset_keyword_success_message', result)
+                callback("1",'listing_success_message', result)
             } else {
                 console.log(error);
-                callback("0",'reset_keyword_something_wrong_message', null)
+                callback("0",'listing_error_message', null)
             };
         });
     },
@@ -145,10 +145,10 @@ var user = {
             con.query(`SELECT m.*,(6371 * acos ( cos (radians(${lattitude}) ) * cos( radians(m.latitude) ) * cos( radians(m.longitude ) - radians(${longitude}
                 ) ) + sin (radians(${lattitude}) ) * sin( radians(m.latitude ) ) ) ) AS distance FROM tbl_market m where is_active = 1 And is_delete = 0 HAVING distance < 10`, function (err, result) {
                 if (!err && result.length > 0) {
-                    callback("1",'reset_keyword_success_message', result);
+                    callback("1",'listing_success_message', result);
                 } else {
                     console.log(err);
-                    callback("0",'reset_keyword_something_wrong_message', null)
+                    callback("0",'listing_error_message', null)
                 }
             })
         })
@@ -161,14 +161,14 @@ var user = {
                 var address_id = result[0].address_id;
                 user.getAddressDetails(address_id, function (Addressdata) {
                     if (Addressdata != null) {
-                        callback("1",'reset_keyword_success_message', Addressdata);
+                        callback("1",'listing_success_message', Addressdata);
                     } else {
-                        callback("0",'reset_keyword_something_wrong_message', null)
+                        callback("0",'listing_error_message', null)
                     }
                 })
 
             } else {
-                callback("0",'reset_keyword_something_wrong_message', null)
+                callback("0",'something_wrong_message', null)
             }
 
         })
@@ -209,9 +209,9 @@ var user = {
         con.query(sql, [insertObj], function (err, result) {
             console.log(err);
             if (!err) {
-                callback("1",'reset_keyword_success_message', result);
+                callback("1",'reset_keyword_add_message', result);
             } else {
-                callback("0",'reset_keyword_something_wrong_message', null)
+                callback("0",'data_add_error_message', null)
             };
         });
     },
@@ -234,7 +234,7 @@ var user = {
                 })
             } else {
                 console.log(err);
-                callback("0",'reset_keyword_something_wrong_message', null)
+                callback("0",'something_wrong_message', null)
             }
         })
     },
@@ -251,22 +251,12 @@ var user = {
         })
     },
 
-    searchEvent: function (request, callback) {
-        con.query(`SELECT *,CONCAT('${global.BASE_URL}','${global.EVENT_URL}',event_image) as event_image FROM tbl_event WHERE (event_date IN ('${request.date}')) ORDER BY event_time`, function (error, result) {
-            if (!error) {
-                callback("1", "reset_keyword_success_message", result)
-            } else {
-                callback("0", "reset_keyword_something_wrong_message", null);
-            }
-        })
-    },
-
     getTax:function(req,callback){
         con.query(`SELECT id,value_added_tax,service_charges,service_charges_tax FROM tbl_tax WHERE is_active = '1' AND is_delete = '0'`,function(error,result){
             if (!error && result.length > 0) {
-                callback("1",'reset_keyword_success_message', result);
+                callback("1",'listing_success_message', result);
             } else {
-                callback("0",'reset_keyword_something_wrong_message', null);
+                callback("0",'listing_error_message', null);
             };
         });
     },
@@ -274,9 +264,9 @@ var user = {
     favouriteProduct:function(req,callback){
         con.query(`SELECT f.id,f.product_id,pd.name,CONCAT(u.first_name,' ',u.last_name) as user_name FROM tbl_favourites f JOIN tbl_product_details pd ON pd.id = f.id JOIN tbl_user u ON u.id = f.user_id WHERE user_id = ?`,[req.user_id],function(error,result){
             if (!error && result.length > 0) {
-                callback('1','Data Found!!',result);
+                callback('1','listing_success_message',result);
             } else {
-                callback('0','rest_keywords_something_wrong',error);
+                callback('0','listing_error_message',error);
             };
         });
     },

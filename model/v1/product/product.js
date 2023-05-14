@@ -162,13 +162,13 @@ var product = {
                                                                         if (isInserted) {
                                                                             con.query(`update tbl_cart set is_active = '0' where user_id = ${id}`, function (error, result) {
                                                                                 if (!error) {
-                                                                                    callback("1", "reset_keyword_success_message", data);
+                                                                                    callback("1", "order_placed_succefully", data);
                                                                                 } else {
-                                                                                    callback('0', 'reset_keyword_data_not_found', null);
+                                                                                    callback('0', 'order_placed_error_message', null);
                                                                                 }
                                                                             })
                                                                         } else {
-                                                                            callback('0', 'reset_keyword_data_not_found', null);
+                                                                            callback('0', 'something_wrong_message', null);
                                                                         }
                                                                     });
                                                                 } else {
@@ -185,7 +185,7 @@ var product = {
                                             })
                                         } else {
                                             var grand_total = subTotal + total_tax;
-                                            callback("1", "reset_keyword_success_message", { result, tax, sender, grand_total, subTotal, reciever });
+                                            callback("1", "order_placed_succefully", { result, tax, sender, grand_total, subTotal, reciever });
                                         }
                                     } else {
                                         callback("0", "reset_keyword_data_not_found", null);
@@ -250,9 +250,7 @@ var product = {
 
     orderSender: function (id, callback) {
         con.query(`SELECT u.id AS user_id,CONCAT(u.first_name,u.last_name) AS sender_name,CONCAT(u.country_code,u.mobile_number) AS sender_contact_number,CONCAT(ad.nearby_landmark,",",ad.area_name,",",ad.street_name)as Adress_info FROM tbl_user u 
-        JOIN tbl_address ad 
-        on u.id=ad.user_id
-        WHERE u.id =${id} limit 1;`, function (error, result) {
+        JOIN tbl_address ad on u.id=ad.user_id WHERE u.id =${id} limit 1;`, function (error, result) {
             if (!error && result.length > 0) {
                 callback(result);
             } else {
@@ -274,7 +272,6 @@ var product = {
                 }
             })
         }, () => {
-            // console.log(reciver_data);
             callback(reciver_data)
         })
     },
@@ -337,7 +334,6 @@ var product = {
                     if (orderDetail) {
                         product.insertReciever(data, productInsertId, function (orderReciever) {
                             if (orderReciever) {
-                                // console.log('order reciever insert');
                                 callback(true);
                             } else {
                                 callback(null);
@@ -420,9 +416,9 @@ var product = {
     cartDetails: function (request, id, callback) {
         con.query("select * from tbl_cart where user_id = ? AND is_active = '1' AND is_delete = '0'", [id], function (err, result) {
             if (!err && result.length > 0) {
-                callback("1", "data found successfully", result);
+                callback("1", "data_found_success_message", result);
             } else {
-                callback("0", "Something went wrong", null);
+                callback("0", "something_wrong_message", null);
             }
         })
     },
@@ -440,7 +436,7 @@ var product = {
                                     products[0].product[i].cartQty = (result[i].qty);
                                 }
                             } else {
-                                callback('1','bhai nthi thatu',products);
+                                callback('1','listing_success_message',products);
                             }
                         }
                     }
@@ -465,11 +461,11 @@ var product = {
                             callback(result);
                         })
                     } else {
-                        callback("1", "reset_keyword_success_message", result);
+                        callback("1", "listing_success_message", result);
                     }
                 })
             } else {
-                callback('0', "reset_keyword_data_not_found", null)
+                callback('0', "listing_error_message", null)
             }
         })
     }
